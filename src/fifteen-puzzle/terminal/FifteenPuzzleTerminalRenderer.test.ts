@@ -20,6 +20,14 @@ describe('FifteenPuzzleTerminalRenderer', () => {
     expect(renderer.render(game)).toContain('15 ');
   });
 
+  test('renders a frame around the grid', () => {
+    const renderer = new FifteenPuzzleTerminalRenderer();
+    const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+
+    expect(renderer.render(game)).toContain('+----+----+----+----+');
+    expect(renderer.render(game)).toContain('|  1 |  2 |  3 |  4 |');
+  });
+
   test('renders solved status when the game is won', () => {
     const renderer = new FifteenPuzzleTerminalRenderer();
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
@@ -46,5 +54,19 @@ describe('FifteenPuzzleTerminalRenderer', () => {
     expect(renderer.render(game)).toContain('Time: 0s');
 
     nowSpy.mockRestore();
+  });
+
+  test('does not render emoji for the blank tile by default', () => {
+    const renderer = new FifteenPuzzleTerminalRenderer();
+    const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+
+    expect(renderer.render(game)).not.toContain('👻');
+  });
+
+  test('renders emoji for the blank tile when emoji mode is enabled', () => {
+    const renderer = new FifteenPuzzleTerminalRenderer({ emoji: true });
+    const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+
+    expect(renderer.render(game)).toContain('👻');
   });
 });
