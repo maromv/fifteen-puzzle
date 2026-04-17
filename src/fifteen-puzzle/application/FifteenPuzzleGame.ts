@@ -1,10 +1,10 @@
-import { FifteenPuzzleBoard } from './FifteenPuzzleBoard';
+import { FifteenPuzzleBoard } from '../domain/FifteenPuzzleBoard';
 
 const BASE_SCORE = 100000;
 const MOVE_PENALTY = 1000;
 const SECOND_PENALTY = 10;
 
-export class Game {
+export class FifteenPuzzleGame {
   private _board: FifteenPuzzleBoard;
   private _moves = 0;
   private readonly _startedAt: number;
@@ -15,12 +15,12 @@ export class Game {
     this._startedAt = Date.now();
   }
 
-  static new(): Game {
-    return new Game(FifteenPuzzleBoard.random());
+  static new(): FifteenPuzzleGame {
+    return new FifteenPuzzleGame(FifteenPuzzleBoard.random());
   }
 
-  static from(board: FifteenPuzzleBoard): Game {
-    return new Game(board);
+  static from(board: FifteenPuzzleBoard): FifteenPuzzleGame {
+    return new FifteenPuzzleGame(board);
   }
 
   get board(): FifteenPuzzleBoard {
