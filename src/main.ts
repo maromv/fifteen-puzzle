@@ -21,7 +21,9 @@ const rl = readline.createInterface({
 function render(): void {
   console.clear();
   console.log(cli.render());
-  console.log('\nUse arrow keys to move tiles. Press q to quit.');
+  console.log(
+    `\n${cli.isGameOver ?? 'Use arrow keys to move tiles. '}Press q to quit.`,
+  );
   rl.question('\n> ', (input) => {
     cli.processCommand(input);
     render();
@@ -32,13 +34,10 @@ function render(): void {
 }
 
 function gameOver() {
-  const message = 'GAME OVER';
   let counter = 0;
   const interval = setInterval(() => {
     console.clear();
     console.log(cli.render());
-    console.log(`    You win!`);
-    console.log(`${counter % 2 ? '  ' + message : '     ' + message}`);
     if (counter > 10) {
       interval.close();
       rl.close();

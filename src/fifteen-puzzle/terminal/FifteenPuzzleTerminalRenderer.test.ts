@@ -2,37 +2,43 @@ import { FifteenPuzzleBoard } from '../domain/FifteenPuzzleBoard';
 import { FifteenPuzzleGame } from '../application/FifteenPuzzleGame';
 import { FifteenPuzzleTerminalRenderer } from './FifteenPuzzleTerminalRenderer';
 
+const stripAnsi = (value: string): string =>
+  value.replace(/\u001b\[[0-9;]*m/g, '');
+
 describe('FifteenPuzzleTerminalRenderer', () => {
   test('renders the board title and move count', () => {
     const renderer = new FifteenPuzzleTerminalRenderer();
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+    const output = stripAnsi(renderer.render(game));
 
-    expect(renderer.render(game)).toContain('15-Puzzle');
-    expect(renderer.render(game)).toContain('Moves: 0');
-    expect(renderer.render(game)).toContain('Score: 100000');
+    expect(output).toContain('15-Puzzle');
+    expect(output).toContain('Moves: 0');
+    expect(output).toContain('Score: 100000');
   });
 
   test('renders the solved board tiles', () => {
     const renderer = new FifteenPuzzleTerminalRenderer();
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+    const output = stripAnsi(renderer.render(game));
 
-    expect(renderer.render(game)).toContain(' 1 ');
-    expect(renderer.render(game)).toContain('15 ');
+    expect(output).toContain(' 1 ');
+    expect(output).toContain('15 ');
   });
 
   test('renders a frame around the grid', () => {
     const renderer = new FifteenPuzzleTerminalRenderer();
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+    const output = stripAnsi(renderer.render(game));
 
-    expect(renderer.render(game)).toContain('+----+----+----+----+');
-    expect(renderer.render(game)).toContain('|  1 |  2 |  3 |  4 |');
+    expect(output).toContain('+----+----+----+----+');
+    expect(output).toContain('|  1 |  2 |  3 |  4 |');
   });
 
   test('renders solved status when the game is won', () => {
     const renderer = new FifteenPuzzleTerminalRenderer();
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
 
-    expect(renderer.render(game)).toContain('Status: SOLVED');
+    expect(stripAnsi(renderer.render(game))).toContain('Status: SOLVED');
   });
 
   test('renders playing status when the game is not won', () => {
@@ -41,7 +47,7 @@ describe('FifteenPuzzleTerminalRenderer', () => {
       FifteenPuzzleBoard.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15]),
     );
 
-    expect(renderer.render(game)).toContain('Status: PLAYING');
+    expect(stripAnsi(renderer.render(game))).toContain('Status: PLAYING');
   });
 
   test('renders elapsed time in seconds', () => {
@@ -51,7 +57,7 @@ describe('FifteenPuzzleTerminalRenderer', () => {
       FifteenPuzzleBoard.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15]),
     );
 
-    expect(renderer.render(game)).toContain('Time: 0s');
+    expect(stripAnsi(renderer.render(game))).toContain('Time: 0s');
 
     nowSpy.mockRestore();
   });
@@ -68,5 +74,16 @@ describe('FifteenPuzzleTerminalRenderer', () => {
     const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
 
     expect(renderer.render(game)).toContain('👻');
+  });
+
+  test('adds ANSI colors to the scoreboard and board', () => {
+    const renderer = new FifteenPuzzleTerminalRenderer();
+    const game = FifteenPuzzleGame.from(FifteenPuzzleBoard.solved());
+    const output = renderer.render(game);
+
+    expect(output).toMatch(/\u001b\[[0-9;]*m15-Puzzle\u001b\[0m/);
+    expect(output).toMatch(/\u001b\[[0-9;]*mMoves:\u001b\[0m/);
+    expect(output).toMatch(/\u001b\[[0-9;]*m\|\u001b\[0m/);
+    expect(output).toContain('\u001b[38;5;210m');
   });
 });
